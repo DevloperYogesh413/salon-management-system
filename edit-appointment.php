@@ -1,35 +1,18 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
 error_reporting(0);
+include('includes/dbconnection.php');
 if (strlen($_SESSION['bpmsaid']==0)) {
   header('location:logout.php');
   } else{
-if(isset($_POST['submit']))
-{
-$adminid=$_SESSION['bpmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
-if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
-$msg= "Your password successully changed"; 
-} else {
-
-$msg="Your current password is wrong";
-}
 
 
 
-}
-
-  
-?>
+  ?>
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>SHUBH_99 | Change Password</title>
+<title>SHUBH_99 || Update Appointment</title>
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- Bootstrap Core CSS -->
@@ -58,19 +41,6 @@ $msg="Your current password is wrong";
 <script src="js/custom.js"></script>
 <link href="css/custom.css" rel="stylesheet">
 <!--//Metis Menu -->
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
-
-</script>
 </head> 
 <body class="cbp-spmenu-push">
 	<div class="main-content">
@@ -78,42 +48,130 @@ return true;
 		 <?php include_once('includes/sidebar.php');?>
 		<!--left-fixed -navigation-->
 		<!-- header-starts -->
-	 <?php include_once('includes/header.php');?>
+		 <?php include_once('includes/header.php');?>
 		<!-- //header-ends -->
 		<!-- main content start-->
 		<div id="page-wrapper">
 			<div class="main-page">
-				<div class="forms">
-					<h3 class="title1">Change Password</h3>
-					<div class="form-grids row widget-shadow" data-example-id="basic-forms"> 
-						<div class="form-title">
-							<h4>Reset Your Password :</h4>
-						</div>
-						<div class="form-body">
-							<form method="post" name="changepassword" onsubmit="return checkpass();" action="">
-								<p style="font-size:16px; color:red" align="center"> <?php if($msg){
+				<div class="tables">
+					<h3 class="title1">All Appointment</h3>
+					
+					
+				
+					<div class="table-responsive bs-example widget-shadow">
+						<p style="font-size:16px; color:red" align="center"> <?php if($msg){
     echo $msg;
   }  ?> </p>
-
-  <?php
-$adminid=$_SESSION['bpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
+						<h4>All Appointment:</h4>
+						<?php
+$cid=$_GET['editid'];
+$ret=mysqli_query($con,"select * from tblappointment where ID='$cid'");
 $cnt=1;
 while ($row=mysqli_fetch_array($ret)) {
 
 ?>
-							 <div class="form-group"> <label for="exampleInputEmail1">Current Password</label> <input type="password" name="currentpassword" class="form-control" required= "true" value=""> </div> <div class="form-group"> <label for="exampleInputPassword1">New Password</label> <input type="password" name="newpassword" class="form-control" value="" required="true"> </div>
-							 <div class="form-group"> <label for="exampleInputPassword1">Confirm Password</label> <input type="password" name="confirmpassword" class="form-control" value="" required="true"> </div>
-							  
-							  <button type="submit" name="submit" class="btn btn-default">Change</button> </form> 
-						</div>
+						<table class="table table-bordered">
+							<tr>
+    <th>Appointment Number</th>
+    <td><?php  echo $row['AptNumber'];?></td>
+  </tr>
+  <tr>
+<th>Name</th>
+    <td><?php  echo $row['Name'];?></td>
+  </tr>
+
+<tr>
+    <th>Email</th>
+    <td><?php  echo $row['Email'];?></td>
+  </tr>
+   <tr>
+    <th>Mobile Number</th>
+    <td><?php  echo $row['PhoneNumber'];?></td>
+  </tr>
+   <tr>
+    <th>Appointment Date</th>
+    <td><?php  echo $row['AptDate'];?></td>
+  </tr>
+ 
+<tr>
+    <th>Appointment Time</th>
+    <td><?php  echo $row['AptTime'];?></td>
+  </tr>
+  
+  <tr>
+    <th>Services</th>
+    <td><?php  echo $row['Services'];?></td>
+  </tr>
+  <tr>
+    <th>Apply Date</th>
+    <td><?php  echo $row['ApplyDate'];?></td>
+  </tr>
+  
+
+<tr>
+    <th>Status</th>
+    <td> <?php  
+if($row['Status']=="1")
+{
+  echo "Selected";
+}
+
+if($row['Status']=="2")
+{
+  echo "Rejected";
+}
+
+     ;?></td>
+  </tr>
+						</table>
+						<table class="table table-bordered">
+							<?php if($row['Remark']==""){ ?>
+
+
+<form name="submit" method="post" enctype="multipart/form-data"> 
+
+<tr>
+    <th>Remark :</th>
+    <td>
+    <textarea name="remark" placeholder="" rows="12" cols="14" class="form-control wd-450" required="true"></textarea></td>
+   </tr>
+
+  <tr>
+    <th>Status :</th>
+    <td>
+   <select name="status" class="form-control wd-450" required="true" >
+     <option value="1" selected="true">Selected</option>
+     <option value="2">Rejected</option>
+   </select></td>
+  </tr>
+
+  <tr align="center">
+    <td colspan="2"><button type="submit" name="submit" class="btn btn-az-primary pd-x-20">Submit</button></td>
+  </tr>
+  </form>
+<?php } else { ?>
+						</table>
+						<table class="table table-bordered">
+							<tr>
+    <th>Remark</th>
+    <td><?php echo $row['Remark']; ?></td>
+  </tr>
+
+
+<tr>
+<th>Remark date</th>
+<td><?php echo $row['Remarkdate']; ?>  </td></tr>
+
+						</table>
+						<?php } ?>
 						<?php } ?>
 					</div>
-				
-				
+				</div>
 			</div>
 		</div>
+		<!--footer-->
 		 <?php include_once('includes/footer.php');?>
+        <!--//footer-->
 	</div>
 	<!-- Classie -->
 		<script src="js/classie.js"></script>
@@ -140,7 +198,7 @@ while ($row=mysqli_fetch_array($ret)) {
 	<script src="js/scripts.js"></script>
 	<!--//scrolling js-->
 	<!-- Bootstrap Core JavaScript -->
-   <script src="js/bootstrap.js"> </script>
+	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
-<?php } ?>
+<?php }  ?>

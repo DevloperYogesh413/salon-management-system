@@ -2,207 +2,118 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-error_reporting(0);
 
 if(isset($_POST['submit']))
   {
     $contactno=$_POST['contactno'];
     $email=$_POST['email'];
-$password=md5($_POST['newpassword']);
-        $query=mysqli_query($con,"select ID from tbluser where  Email='$email' and MobileNumber='$contactno' ");
-        
-    $ret=mysqli_num_rows($query);
+
+        $query=mysqli_query($con,"select ID from tbladmin where  Email='$email' and MobileNumber='$contactno' ");
+    $ret=mysqli_fetch_array($query);
     if($ret>0){
       $_SESSION['contactno']=$contactno;
       $_SESSION['email']=$email;
-      $query1=mysqli_query($con,"update tbluser set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
-       if($query1)
-   {
-echo "<script>alert('Password successfully changed');</script>";
-
-   }
-     
+     header('location:reset-password.php');
     }
     else{
-    
-      echo "<script>alert('Invalid Details. Please try again.');</script>";
+      $msg="Invalid Details. Please try again.";
     }
   }
-?>
-<!doctype html>
-<html lang="en">
-  <head>
- 
+  ?>
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>SHUBH_99| Forgot Page </title>
 
-    <title>Salon Management System </title>
-
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="assets/css/style-starter.css">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,700,700i&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-  </head>
-  <body id="home">
-<?php include_once('includes/header.php');?>
-
-<script src="assets/js/jquery-3.3.1.min.js"></script> <!-- Common jquery plugin -->
-<!--bootstrap working-->
-<script src="assets/js/bootstrap.min.js"></script>
-<!-- //bootstrap working-->
-<!-- disable body scroll which navbar is in active -->
-<script>
-$(function () {
-  $('.navbar-toggler').click(function () {
-    $('body').toggleClass('noscroll');
-  })
-});
-</script>
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
-
-</script>
-<!-- disable body scroll which navbar is in active -->
-
-<!-- breadcrumbs -->
-<section class="w3l-inner-banner-main">
-    <div class="about-inner contact ">
-        <div class="container">   
-            <div class="main-titles-head text-center">
-            <h3 class="header-name ">
-                
- Forgot Password
-            </h3>
-            <p class="tiltle-para ">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic fuga sit illo modi aut aspernatur tempore laboriosam saepe dolores eveniet.</p>
-        </div>
-</div>
-</div>
-<div class="breadcrumbs-sub">
-<div class="container">   
-<ul class="breadcrumbs-custom-path">
-    <li class="right-side propClone"><a href="index.php" class="">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a> <p></li>
-    <li class="active ">
-        Forgot Password</li>
-</ul>
-</div>
-</div>
-    </div>
-</section>
-<!-- breadcrumbs //-->
-<section class="w3l-contact-info-main" id="contact">
-    <div class="contact-sec	">
-        <div class="container">
-
-            <div class="d-grid contact-view">
-                <div class="cont-details">
-                    <?php
-
-$ret=mysqli_query($con,"select * from tblpage where PageType='contactus' ");
-$cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
-
-?>
-                    <div class="cont-top">
-                        <div class="cont-left text-center">
-                            <span class="fa fa-phone text-primary"></span>
-                        </div>
-                        <div class="cont-right">
-                            <h6>Call Us</h6>
-                            <p class="para"><a href="tel:+44 99 555 42">+<?php  echo $row['MobileNumber'];?></a></p>
-                        </div>
-                    </div>
-                    <div class="cont-top margin-up">
-                        <div class="cont-left text-center">
-                            <span class="fa fa-envelope-o text-primary"></span>
-                        </div>
-                        <div class="cont-right">
-                            <h6>Email Us</h6>
-                            <p class="para"><a href="mailto:example@mail.com" class="mail"><?php  echo $row['Email'];?></a></p>
-                        </div>
-                    </div>
-                    <div class="cont-top margin-up">
-                        <div class="cont-left text-center">
-                            <span class="fa fa-map-marker text-primary"></span>
-                        </div>
-                        <div class="cont-right">
-                            <h6>Address</h6>
-                            <p class="para"> <?php  echo $row['PageDescription'];?></p>
-                        </div>
-                    </div>
-                    <div class="cont-top margin-up">
-                        <div class="cont-left text-center">
-                            <span class="fa fa-map-marker text-primary"></span>
-                        </div>
-                        <div class="cont-right">
-                            <h6>Time</h6>
-                            <p class="para"> <?php  echo $row['Timing'];?></p>
-                        </div>
-                    </div>
-               <?php } ?> </div>
-                <div class="map-content-9 mt-lg-0 mt-4">
-                    <h3 style="padding-bottom: 10px;">Reset your password and Fill below details</h3>
-                    <form method="post">
-                        <div>
-                            <input type="text" class="form-control" name="email" placeholder="Enter Your Email" required="true">
-                           
-                        </div>
-                        <div style="padding-top: 30px;">
-                          <input type="text" class="form-control" name="contactno" placeholder="Contact Number" required="true" pattern="[0-9]+">
-                        
-                        </div>
-                        <div style="padding-top: 30px;">
-                          <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="New Password">
-                        
-                        </div>
-                        <div style="padding-top: 30px;">
-                           <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password">
-                        
-                        </div>
-                        <div class="twice-two" style="padding-top: 30px;">
-                          <a class="link--gray" style="color: blue;" href="login.php">signin</a>
-                        
-                        </div>
-                        <button type="submit" class="btn btn-contact" name="submit">Reset</button>
-                    </form>
-                </div>
-    </div>
-   
-    </div></div>
-</section>
-<?php include_once('includes/footer.php');?>
-<!-- move top -->
-<button onclick="topFunction()" id="movetop" title="Go to top">
-	<span class="fa fa-long-arrow-up"></span>
-</button>
-<script>
-	// When the user scrolls down 20px from the top of the document, show the button
-	window.onscroll = function () {
-		scrollFunction()
-	};
-
-	function scrollFunction() {
-		if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-			document.getElementById("movetop").style.display = "block";
-		} else {
-			document.getElementById("movetop").style.display = "none";
-		}
-	}
-
-	// When the user clicks on the button, scroll to the top of the document
-	function topFunction() {
-		document.body.scrollTop = 0;
-		document.documentElement.scrollTop = 0;
-	}
-</script>
-<!-- /move top -->
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!-- Bootstrap Core CSS -->
+<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+<!-- Custom CSS -->
+<link href="css/style.css" rel='stylesheet' type='text/css' />
+<!-- font CSS -->
+<!-- font-awesome icons -->
+<link href="css/font-awesome.css" rel="stylesheet"> 
+<!-- //font-awesome icons -->
+ <!-- js-->
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/modernizr.custom.js"></script>
+<!--webfonts-->
+<link href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<!--//webfonts--> 
+<!--animate-->
+<link href="css/animate.css" rel="stylesheet" type="text/css" media="all">
+<script src="js/wow.min.js"></script>
+	<script>
+		 new WOW().init();
+	</script>
+<!--//end-animate-->
+<!-- Metis Menu -->
+<script src="js/metisMenu.min.js"></script>
+<script src="js/custom.js"></script>
+<link href="css/custom.css" rel="stylesheet">
+<!--//Metis Menu -->
+</head> 
+<body class="cbp-spmenu-push">
+	<div class="main-content">
+		
+		<!-- main content start-->
+		<div style="background-color: #F1F1F1; height:800px;">			<div class="main-page login-page ">
+				<h3 class="title1">Forgot Page</h3>
+				<div class="widget-shadow">
+					<div class="login-top">
+						<h4>Welcome back to SHUBH_99 AdminPanel ! </h4>
+					</div>
+					<div class="login-body">
+						<form role="form" method="post" action="">
+							<p style="font-size:16px; color:red" align="center"> <?php if($msg){
+    echo $msg;
+  }  ?> </p>
+							<input type="text" name="email" class="lock" placeholder="Email" required="true">
+							
+							<input type="text" name="contactno" class="lock" placeholder="Mobile Number" required="true" maxlength="10" pattern="[0-9]+">
+							
+							<input type="submit" name="submit" value="Reset">
+							<div class="forgot-grid">
+								
+								<div class="forgot">
+									<a href="index.php">Already have an account</a>
+								</div>
+								<div class="clearfix"> </div>
+							</div>
+						</form>
+					</div>
+				</div>
+				
+				
+			</div>
+		</div>
+		
+	</div>
+	<!-- Classie -->
+		<script src="js/classie.js"></script>
+		<script>
+			var menuLeft = document.getElementById( 'cbp-spmenu-s1' ),
+				showLeftPush = document.getElementById( 'showLeftPush' ),
+				body = document.body;
+				
+			showLeftPush.onclick = function() {
+				classie.toggle( this, 'active' );
+				classie.toggle( body, 'cbp-spmenu-push-toright' );
+				classie.toggle( menuLeft, 'cbp-spmenu-open' );
+				disableOther( 'showLeftPush' );
+			};
+			
+			function disableOther( button ) {
+				if( button !== 'showLeftPush' ) {
+					classie.toggle( showLeftPush, 'disabled' );
+				}
+			}
+		</script>
+	<!--scrolling js-->
+	<script src="js/jquery.nicescroll.js"></script>
+	<script src="js/scripts.js"></script>
+	<!--//scrolling js-->
+	<!-- Bootstrap Core JavaScript -->
+   <script src="js/bootstrap.js"> </script>
 </body>
-
 </html>

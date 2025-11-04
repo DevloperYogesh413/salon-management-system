@@ -1,35 +1,37 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
 error_reporting(0);
+include('includes/dbconnection.php');
 if (strlen($_SESSION['bpmsaid']==0)) {
   header('location:logout.php');
   } else{
+
 if(isset($_POST['submit']))
-{
-$adminid=$_SESSION['bpmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
-if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
-$msg= "Your password successully changed"; 
-} else {
-
-$msg="Your current password is wrong";
-}
-
-
-
-}
+  {
+    $sername=$_POST['sername'];
+    $serdesc=$_POST['serdesc'];
+    $cost=$_POST['cost'];
+   
+ $eid=$_GET['editid'];
+     
+    $query=mysqli_query($con, "update  tblservices set ServiceName='$sername',ServiceDescription='$serdesc',Cost='$cost' where ID='$eid' ");
+    if ($query) {
+  
+    echo "<script>alert('Service has been Updated.');</script>";
+  }
+  else
+    {
+      
+      echo "<script>alert('Something Went Wrong. Please try again.');</script>";
+    }
 
   
-?>
+}
+  ?>
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>SHUBH_99 | Change Password</title>
+<title>SHUBH_99 | Update Services</title>
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- Bootstrap Core CSS -->
@@ -58,19 +60,6 @@ $msg="Your current password is wrong";
 <script src="js/custom.js"></script>
 <link href="css/custom.css" rel="stylesheet">
 <!--//Metis Menu -->
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
-
-</script>
 </head> 
 <body class="cbp-spmenu-push">
 	<div class="main-content">
@@ -84,30 +73,32 @@ return true;
 		<div id="page-wrapper">
 			<div class="main-page">
 				<div class="forms">
-					<h3 class="title1">Change Password</h3>
+					<h3 class="title1">Update Services</h3>
 					<div class="form-grids row widget-shadow" data-example-id="basic-forms"> 
 						<div class="form-title">
-							<h4>Reset Your Password :</h4>
+							<h4>Update Parlour Services:</h4>
 						</div>
 						<div class="form-body">
-							<form method="post" name="changepassword" onsubmit="return checkpass();" action="">
-								<p style="font-size:16px; color:red" align="center"> <?php if($msg){
-    echo $msg;
-  }  ?> </p>
-
+							<form method="post">
+								
   <?php
-$adminid=$_SESSION['bpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
+ $cid=$_GET['editid'];
+$ret=mysqli_query($con,"select * from  tblservices where ID='$cid'");
 $cnt=1;
 while ($row=mysqli_fetch_array($ret)) {
 
-?>
-							 <div class="form-group"> <label for="exampleInputEmail1">Current Password</label> <input type="password" name="currentpassword" class="form-control" required= "true" value=""> </div> <div class="form-group"> <label for="exampleInputPassword1">New Password</label> <input type="password" name="newpassword" class="form-control" value="" required="true"> </div>
-							 <div class="form-group"> <label for="exampleInputPassword1">Confirm Password</label> <input type="password" name="confirmpassword" class="form-control" value="" required="true"> </div>
-							  
-							  <button type="submit" name="submit" class="btn btn-default">Change</button> </form> 
+?> 
+
+  
+							 <div class="form-group"> <label for="exampleInputEmail1">Service Name</label> <input type="text" class="form-control" id="sername" name="sername" placeholder="Service Name" value="<?php  echo $row['ServiceName'];?>" required="true"> </div>
+							 <div class="form-group"> <label for="exampleInputEmail1">Service Description</label> <textarea type="text" class="form-control" id="sername" name="serdesc" placeholder="Service Name" value="" required="true"><?php  echo $row['ServiceDescription'];?></textarea> </div>
+							 <div class="form-group"> <label for="exampleInputPassword1">Cost</label> <input type="text" id="cost" name="cost" class="form-control" placeholder="Cost" value="<?php  echo $row['Cost'];?>" required="true"> </div>
+							 <div class="form-group"> <label for="exampleInputPassword1">Image</label>  <img src="images/<?php echo $row['Image']?>" width="120">
+               <a href="update-image.php?lid=<?php echo $row['ID'];?>">Update Image</a> </div>
+							 <?php } ?>
+							  <button type="submit" name="submit" class="btn btn-default">Update</button> </form> 
 						</div>
-						<?php } ?>
+						
 					</div>
 				
 				

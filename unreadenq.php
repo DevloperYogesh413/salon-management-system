@@ -1,35 +1,23 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
 error_reporting(0);
+include('includes/dbconnection.php');
 if (strlen($_SESSION['bpmsaid']==0)) {
   header('location:logout.php');
   } else{
-if(isset($_POST['submit']))
-{
-$adminid=$_SESSION['bpmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
-if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
-$msg= "Your password successully changed"; 
-} else {
 
-$msg="Your current password is wrong";
-}
+if($_GET['delid']){
+$sid=$_GET['delid'];
+mysqli_query($con,"delete from tblcontact where ID ='$sid'");
+echo "<script>alert('Data Deleted');</script>";
+echo "<script>window.location.href='unreadenq.php'</script>";
+          }
 
-
-
-}
-
-  
-?>
+  ?>
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>SHUBH_99 | Change Password</title>
+<title>SHUBH_99 || Manage Read Enquiry</title>
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- Bootstrap Core CSS -->
@@ -58,19 +46,6 @@ $msg="Your current password is wrong";
 <script src="js/custom.js"></script>
 <link href="css/custom.css" rel="stylesheet">
 <!--//Metis Menu -->
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
-
-</script>
 </head> 
 <body class="cbp-spmenu-push">
 	<div class="main-content">
@@ -78,42 +53,53 @@ return true;
 		 <?php include_once('includes/sidebar.php');?>
 		<!--left-fixed -navigation-->
 		<!-- header-starts -->
-	 <?php include_once('includes/header.php');?>
+		 <?php include_once('includes/header.php');?>
 		<!-- //header-ends -->
 		<!-- main content start-->
 		<div id="page-wrapper">
 			<div class="main-page">
-				<div class="forms">
-					<h3 class="title1">Change Password</h3>
-					<div class="form-grids row widget-shadow" data-example-id="basic-forms"> 
-						<div class="form-title">
-							<h4>Reset Your Password :</h4>
-						</div>
-						<div class="form-body">
-							<form method="post" name="changepassword" onsubmit="return checkpass();" action="">
-								<p style="font-size:16px; color:red" align="center"> <?php if($msg){
-    echo $msg;
-  }  ?> </p>
-
-  <?php
-$adminid=$_SESSION['bpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
+				<div class="tables">
+					<h3 class="title1">Manage Unread Enquiry</h3>
+					
+					
+				
+					<div class="table-responsive bs-example widget-shadow">
+						<h4>View Enquiry:</h4>
+						<table class="table table-bordered"> <thead> <tr>
+                   <th>S.No</th>
+                   <th>Name</th>
+                    <th>Email</th>
+                
+                    <th>Enquiry Date</th>
+                     <th>Action</th>
+                  </tr> </thead> <tbody>
+<?php
+$ret=mysqli_query($con,"select * from tblcontact where IsRead is null");
 $cnt=1;
 while ($row=mysqli_fetch_array($ret)) {
 
 ?>
-							 <div class="form-group"> <label for="exampleInputEmail1">Current Password</label> <input type="password" name="currentpassword" class="form-control" required= "true" value=""> </div> <div class="form-group"> <label for="exampleInputPassword1">New Password</label> <input type="password" name="newpassword" class="form-control" value="" required="true"> </div>
-							 <div class="form-group"> <label for="exampleInputPassword1">Confirm Password</label> <input type="password" name="confirmpassword" class="form-control" value="" required="true"> </div>
-							  
-							  <button type="submit" name="submit" class="btn btn-default">Change</button> </form> 
-						</div>
-						<?php } ?>
+
+						 <tr class="gradeX">
+                 <td><?php echo $cnt;?></td>
+              
+                  <td><?php  echo $row['FirstName'];?> <?php  echo $row['LastName'];?></td>
+                                        <td><?php  echo $row['Email'];?></td>
+                                        <td>
+                                            <span class="badge badge-primary"><?php echo $row['EnquiryDate'];?></span>
+                                        </td>
+                                         <td><a href="view-enquiry.php?viewid=<?php echo $row['ID'];?>" class="btn btn-primary">View</a>
+<a href="unreadenq.php?delid=<?php echo $row['ID'];?>" class="btn btn-danger" onClick="return confirm('Are you sure you want to delete?')">Delete</a></td>
+                </tr>   <?php 
+$cnt=$cnt+1;
+}?></tbody> </table> 
 					</div>
-				
-				
+				</div>
 			</div>
 		</div>
+		<!--footer-->
 		 <?php include_once('includes/footer.php');?>
+        <!--//footer-->
 	</div>
 	<!-- Classie -->
 		<script src="js/classie.js"></script>
@@ -140,7 +126,7 @@ while ($row=mysqli_fetch_array($ret)) {
 	<script src="js/scripts.js"></script>
 	<!--//scrolling js-->
 	<!-- Bootstrap Core JavaScript -->
-   <script src="js/bootstrap.js"> </script>
+	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
-<?php } ?>
+<?php }  ?>
